@@ -6,13 +6,16 @@ public class Wish {
     private String wish_description;
     private String wish_price;
     private boolean is_reserved;
+    private String wish_link;
 
-    public Wish(int wish_id, String wish_name) {
+
+    public Wish(int wish_id, String wish_name, String wish_description, String wish_price, boolean is_reserved, String wish_link) {
         this.wish_id = wish_id;
         this.wish_name = wish_name;
         this.wish_description = "";
         this.wish_price = "";
         this.is_reserved = false;
+        this.wish_link = "";
     }
 
     public int getWish_id() {
@@ -54,4 +57,14 @@ public class Wish {
     public void setReserved(boolean reserved) {
         is_reserved = reserved;
     }
+
+    public String getWish_link() {
+        return wish_link;
+    }
+
+    public void setWish_link(String wish_link) {
+        this.wish_link = wish_link;
+    }
+
+
 }
