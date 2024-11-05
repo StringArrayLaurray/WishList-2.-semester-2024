@@ -1,12 +1,15 @@
 package org.example.wishlist2semester2024.model;
 
 public class User {
-    private int user_id;
+    private int user_id; // jeg tror at SQL laver IDet
     private String first_name;
     private String last_name;
     private String email;
     private String password;
     private String username;
+
+    public User(){
+    }
 
     public User(int user_id, String first_name, String last_name, String email, String password, String username) {
         this.user_id = user_id;
