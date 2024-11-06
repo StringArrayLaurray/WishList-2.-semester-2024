@@ -13,7 +13,7 @@ public class WishRepository {
     private String PASSWORD = "";
 
     public void saveNewUser(User user){
-        String sql = "INSERT INTO tablenavn (first_name, last_name, email, username, password) VALUES (?, ?, ?, ?, ?)";
+        String sql = "INSERT INTO user (first_name, last_name, email, username, password) VALUES (?, ?, ?, ?, ?)";
         try (Connection con = DriverManager.getConnection(URL, USERNAME, PASSWORD);
         PreparedStatement stmt = con.prepareStatement(sql)) {
             stmt.setString(1, user.getFirst_name());
