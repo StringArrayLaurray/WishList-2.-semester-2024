@@ -1,10 +1,20 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
     <title>User Page</title>
 </head>
 <body>
-<h1>THIS IS AN USER</h1>
+<h1>THIS IS A USER</h1>
+<table id="wishlistTable">
+    <tr>
+        <th>Wishlist</th>
+    </tr>
+    <tr th:each="wishlist : ${wishlists}">
+        <a th:href="@{'/wishlist/' + ${wishlist.wishlist_id}}" th:text="${wishlist.wishlist_name}"></a>
+    </tr>
+</table>
+
+
 </body>
 </html>
