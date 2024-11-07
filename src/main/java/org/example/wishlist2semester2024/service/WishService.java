@@ -1,10 +1,13 @@
 package org.example.wishlist2semester2024.service;
 
 import org.example.wishlist2semester2024.model.User;
+import org.example.wishlist2semester2024.model.Wish;
+import org.example.wishlist2semester2024.model.Wishlist;
 import org.example.wishlist2semester2024.repository.WishRepository;
 import org.springframework.stereotype.Service;
 
 import java.sql.*;
+import java.util.List;
 
 @Service
 public class WishService {
@@ -22,7 +25,7 @@ public class WishService {
     public User findUserByName(String name){
         String sql = "SELECT * FROM user WHERE username = ?";
         try (Connection con = DriverManager.getConnection(wishRepository.getURL(), wishRepository.getUSERNAME(), wishRepository.getPASSWORD());
-        PreparedStatement stmt = con.prepareStatement(sql)){
+             PreparedStatement stmt = con.prepareStatement(sql)){
 
             stmt.setString(1, name);
             try (ResultSet rs = stmt.executeQuery()){
@@ -46,7 +49,7 @@ public class WishService {
     public boolean validateUserPassword(User user){
         String sql = "SELECT password FROM user WHERE username = ?";
         try (Connection con = DriverManager.getConnection(wishRepository.getURL(), wishRepository.getUSERNAME(), wishRepository.getPASSWORD());
-            PreparedStatement stmt = con.prepareStatement(sql)){
+             PreparedStatement stmt = con.prepareStatement(sql)){
 
             stmt.setString(1, user.getUsername());
             try (ResultSet rs = stmt.executeQuery()){
@@ -59,4 +62,19 @@ public class WishService {
         }
         return false;
     }
+    public List<Wish> getWishesByWishlistId(int wishlistId) {
+        return wishRepository.findWishesByWishlistId(wishlistId);
+    }
+
+    public void saveWish(Wish wish) {
+        wishRepository.saveWish(wish);
+    }
+
+    public Wishlist getWishlistById(int wishlistId) {
+        return wishRepository.getWishlistById(wishlistId);
+    }
+    public void saveWishlist(Wishlist wishlist) {
+        wishRepository.saveWishlist(wishlist);
+    }
 }
+

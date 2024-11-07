@@ -5,17 +5,31 @@ public class Wish {
     private String wish_name;
     private String wish_description;
     private String wish_price;
-    private boolean is_reserved;
     private String wish_link;
+    private int wishlist_id;
+
+    // her er standardkonstruktøren bare
+    public Wish(){
+    }
+
+    //Kontruktør uden wish id altså til nye ønsker
+    public Wish(String wish_name, String wish_description, String wish_price, String wish_link, int wishlist_id) {
+        this.wish_name = wish_name;
+        this.wish_description = wish_description;
+        this.wish_price = wish_price;
+        this.wish_link = wish_link;
+        this.wishlist_id = wishlist_id;
+    }
 
 
-    public Wish(int wish_id, String wish_name, String wish_description, String wish_price, boolean is_reserved, String wish_link) {
+    // konstruktør med wish id altså når vi skal læse ønsker fra databasen
+    public Wish(int wish_id, String wish_name, String wish_description, String wish_price, String wish_link, int wishlist_id) {
         this.wish_id = wish_id;
         this.wish_name = wish_name;
-        this.wish_description = "";
-        this.wish_price = "";
-        this.is_reserved = false;
-        this.wish_link = "";
+        this.wish_description = wish_description;
+        this.wish_price = wish_price;
+        this.wish_link = wish_link;
+        this.wishlist_id = wishlist_id;
     }
 
     public int getWish_id() {
@@ -50,13 +64,6 @@ public class Wish {
         this.wish_price = wish_price;
     }
 
-    public boolean isReserved() {
-        return is_reserved;
-    }
-
-    public void setReserved(boolean reserved) {
-        is_reserved = reserved;
-    }
 
     public String getWish_link() {
         return wish_link;
@@ -64,6 +71,14 @@ public class Wish {
 
     public void setWish_link(String wish_link) {
         this.wish_link = wish_link;
+    }
+
+    public int getWishlist_id() {
+        return wishlist_id;
+    }
+
+    public void setWishlist_id(int wishlist_id) {
+        this.wishlist_id = wishlist_id;
     }
 
 
