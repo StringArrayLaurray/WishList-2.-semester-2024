@@ -8,13 +8,25 @@ import java.sql.*;
 @Repository
 public class WishRepository {
 
-    private String URL = "";
-    private String USERNAME = "";
-    private String PASSWORD = "";
+    private String url = System.getenv("JDBC_DB_URL");
+    private String username = System.getenv("JDBC_DB_USERNAME");
+    private String password = System.getenv("JDBC_DB_PASSWORD");
+
+    public String getUrl() {
+        return url;
+    }
+
+    public String getUsername() {
+        return username;
+    }
+
+    public String getPassword() {
+        return password;
+    }
 
     public void saveNewUser(User user){
         String sql = "INSERT INTO user (first_name, last_name, email, username, password) VALUES (?, ?, ?, ?, ?)";
-        try (Connection con = DriverManager.getConnection(URL, USERNAME, PASSWORD);
+        try (Connection con = DriverManager.getConnection(url, username, password);
         PreparedStatement stmt = con.prepareStatement(sql)) {
             stmt.setString(1, user.getFirst_name());
             stmt.setString(2, user.getLast_name());

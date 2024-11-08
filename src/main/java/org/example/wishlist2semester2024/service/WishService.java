@@ -21,7 +21,7 @@ public class WishService {
 
     public User findUserByName(String name){
         String sql = "SELECT * FROM user WHERE username = ?";
-        try (Connection con = DriverManager.getConnection(wishRepository.getURL(), wishRepository.getUSERNAME(), wishRepository.getPASSWORD());
+        try (Connection con = DriverManager.getConnection(wishRepository.getUrl(), wishRepository.getUsername(), wishRepository.getPassword());
         PreparedStatement stmt = con.prepareStatement(sql)){
 
             stmt.setString(1, name);
@@ -45,7 +45,7 @@ public class WishService {
 
     public boolean validateUserPassword(User user){
         String sql = "SELECT password FROM user WHERE username = ?";
-        try (Connection con = DriverManager.getConnection(wishRepository.getURL(), wishRepository.getUSERNAME(), wishRepository.getPASSWORD());
+        try (Connection con = DriverManager.getConnection(wishRepository.getUrl(), wishRepository.getUsername(), wishRepository.getPassword());
             PreparedStatement stmt = con.prepareStatement(sql)){
 
             stmt.setString(1, user.getUsername());
