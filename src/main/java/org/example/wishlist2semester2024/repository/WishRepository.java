@@ -5,7 +5,6 @@ import org.example.wishlist2semester2024.model.Wish;
 import org.example.wishlist2semester2024.model.Wishlist;
 import org.springframework.stereotype.Repository;
 
-import javax.swing.tree.RowMapper;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
