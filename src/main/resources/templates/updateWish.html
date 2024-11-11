@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Opdater Ønske</title>
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+<div class="container">
+    <h1>Opdater Ønske</h1>
+    <form th:action="@{/updateWish/{wishlist_id}/{wish_id}(wishlist_id=${wishlist_id}, wish_id=${wish.wish_id})}" method="post">
+        <label for="wish_name">Navn:</label>
+        <input type="text" id="wish_name" name="wish_name" th:value="${wish.wish_name}" required>
+
+        <label for="wish_price">Pris:</label>
+        <input type="text" id="wish_price" name="wish_price" th:value="${wish.wish_price}" required>
+
+        <label for="wish_description">Beskrivelse:</label>
+        <textarea id="wish_description" name="wish_description" th:text="${wish.wish_description}"></textarea>
+
+        <label for="wish_link">Link:</label>
+        <input type="url" id="wish_link" name="wish_link" th:value="${wish.wish_link}">
+
+        <button type="submit">Opdater Ønske</button>
+    </form>
+    <a th:href="@{/viewWishList/{wishlist_id}(wishlist_id=${wishlist_id})}">Tilbage til ønskeliste</a>
+</div>
+</body>
+</html>
+

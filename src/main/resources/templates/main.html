@@ -1,18 +1,13 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org">
-
+<html xmlns:th="http://www.thymeleaf.org">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta http-equiv="X-UA-Compatible" content="ie=edge">
-  <link th:href="@{/css/styling.css}" rel="stylesheet">
   <title>Main</title>
+  <link rel="stylesheet" href="/css/style.css">
 </head>
-
 <body>
-<h1>THIS IS A MAIN PAGE</h1>
-<a href="#" th:href="@{/login}" class="button">Login</a><br>
-<a href="#" th:href="@{/add}" class="button">Create New User</a>
+<div class="container">
+  <h1>Velkommen til din egen personlige ønskesky!</h1>
+  <p>Please <a href="/login">login</a> or <a href="/createUser">create an account</a> to continue.</p>
+</div>
 </body>
-
 </html>

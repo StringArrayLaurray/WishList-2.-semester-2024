@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Wish List</title>
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+<div class="container">
+    <h1>Ønskeliste: <span th:text="${wishlist}"></span></h1>
+
+    <ul>
+        <li th:each="wish : ${wishes}">
+            <span th:text="${wish.wish_name}">Wish Name</span> -
+            <span th:text="${wish.wish_price}">Price</span> -
+            <span th:text="${wish.wish_description}">Description</span>
+            <span th:text="${wish.wish_link}">Link</span>
+            <a th:href="@{/deleteWish/{wishlist_id}/{wish_id}(wishlist_id=${wishlist}, wish_id=${wish.wish_id})}">Delete</a>
+            <a th:href="@{/updateWish/{wishlist_id}/{wish_id}(wishlist_id=${wishlist}, wish_id=${wish.wish_id})}">Opdater</a>
+        </li>
+    </ul>
+
+    <form th:action="@{/addWish/{wishlist_id}(wishlist_id=${wishlist})}" method="get">
+        <input type="text" name="wish_name" placeholder="Wish Name" required>
+        <input type="text" name="wish_price" placeholder="Wish Price" required>
+        <input type="text" name="wish_description" placeholder="Wish Description">
+        <input type="text" name="wish_link" placeholder="Wish Link">
+        <button type="submit">Tilføj ønske</button>
+    </form>
+
+    <a href="/userPage" class="back-to-user">Back to User Page</a>
+</div>
+</body>
+</html>
