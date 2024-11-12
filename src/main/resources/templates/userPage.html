@@ -1,20 +1,27 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org">
 <head>
-    <meta charset="UTF-8">
     <title>User Page</title>
+    <link rel="stylesheet" href="/css/styling.css">
 </head>
 <body>
-<h1>THIS IS A USER</h1>
-<table id="wishlistTable">
-    <tr>
-        <th>Wishlist</th>
-    </tr>
-    <tr th:each="wishlist : ${wishlists}">
-        <a th:href="@{'/wishlist/' + ${wishlist.wishlist_id}}" th:text="${wishlist.wishlist_name}"></a>
-    </tr>
-</table>
+<div class="container">
+    <h1>Velkommen, <span th:text="${user.username}"></span>!</h1>
 
+    <h2>Dine ønskelister:</h2>
+    <ul>
+        <li th:each="wishlist : ${wishlist}">
+            <a th:href="@{/viewWishList/{wishlist_id}(wishlist_id=${wishlist.wishlist_id})}" th:text="${wishlist.wishlist_name}"></a>
+            <a th:href="@{/deleteWishList/{wishlist_id}(wishlist_id=${wishlist.wishlist_id})}">Slet</a>
+        </li>
+    </ul>
 
+    <form th:action="@{/createWishlist}" method="post">
+        <input type="text" name="wishlist_name" placeholder="New wishlist name" required>
+        <button type="submit">Opret en ønskeliste</button>
+    </form>
+
+    <a href="/logout" class="logout">Log ud</a>
+</div>
 </body>
 </html>

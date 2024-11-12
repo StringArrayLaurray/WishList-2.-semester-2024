@@ -5,7 +5,9 @@ import java.util.ArrayList;
 public class Wishlist {
     private int wishlist_id;
     private String wishlist_name;
-    private ArrayList<Wish> wishes = new ArrayList<Wish>();
+
+    public Wishlist() {
+    }
 
     public Wishlist(int wishlist_id, String wishlist_name) {
         this.wishlist_id = wishlist_id;
