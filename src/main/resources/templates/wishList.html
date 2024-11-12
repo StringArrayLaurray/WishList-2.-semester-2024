@@ -6,7 +6,7 @@
 </head>
 <body>
 <div class="container">
-    <h1>Ønskeliste: <span th:text="${wishlist}"></span></h1>
+    <h1>Ønskeliste: <span th:text="${wishlistName}"></span></h1>
 
     <ul>
         <li th:each="wish : ${wishes}">
@@ -14,12 +14,12 @@
             <span th:text="${wish.wish_price}">Price</span> -
             <span th:text="${wish.wish_description}">Description</span>
             <span th:text="${wish.wish_link}">Link</span>
-            <a th:href="@{/deleteWish/{wishlist_id}/{wish_id}(wishlist_id=${wishlist}, wish_id=${wish.wish_id})}">Delete</a>
-            <a th:href="@{/updateWish/{wishlist_id}/{wish_id}(wishlist_id=${wishlist}, wish_id=${wish.wish_id})}">Opdater</a>
+            <a th:href="@{/deleteWish/{wishlist_id}/{wish_id}(wishlist_id=${wishlist_id}, wish_id=${wish.wish_id})}">Delete</a>
+            <a th:href="@{/updateWish/{wishlist_id}/{wish_id}(wishlist_id=${wishlist_id}, wish_id=${wish.wish_id})}">Opdater</a>
         </li>
     </ul>
 
-    <form th:action="@{/addWish/{wishlist_id}(wishlist_id=${wishlist})}" method="get">
+    <form th:action="@{/addWish/{wishlist_id}(wishlist_id=${wishlist_id})}" method="post">
         <input type="text" name="wish_name" placeholder="Wish Name" required>
         <input type="text" name="wish_price" placeholder="Wish Price" required>
         <input type="text" name="wish_description" placeholder="Wish Description">

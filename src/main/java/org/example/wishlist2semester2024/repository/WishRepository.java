@@ -204,6 +204,26 @@ public class WishRepository {
         return wishlists;
     }
 
+    public Wishlist findWishlistById(int wishlist_id) {
+        String sql = "SELECT * FROM wishlist WHERE wishlist_id = ?";
+        Wishlist wishlist = null;
+        try (Connection con = DriverManager.getConnection(url, username, password);
+             PreparedStatement stmt = con.prepareStatement(sql)) {
+            stmt.setInt(1, wishlist_id);
+            try (ResultSet rs = stmt.executeQuery()) {
+                if (rs.next()) {
+                    wishlist = new Wishlist();
+                    wishlist.setWishlist_id(rs.getInt("wishlist_id"));
+                    wishlist.setWishlist_name(rs.getString("wishlist_name"));
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+            throw new RuntimeException("Fejl ved hentning af ønskeliste", e);
+        }
+        return wishlist;
+    }
+
 
     public void addWishToWishlist(Wish wish, int wishlist_id) {
         String sql = "INSERT INTO wish (wish_name, wish_price, wish_description, wish_link, wishlist_id) VALUES (?, ?, ?, ?, ?)";

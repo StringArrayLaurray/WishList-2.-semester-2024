@@ -10,7 +10,7 @@ public class Wish {
     public Wish(){
     }
 
-    public Wish(int wish_id, String wish_name, String wish_description, String wish_price, boolean is_reserved, String wish_link) {
+    public Wish(int wish_id, String wish_name, String wish_description, String wish_price, String wish_link) {
         this.wish_id = wish_id;
         this.wish_name = wish_name;
         this.wish_description = "";
