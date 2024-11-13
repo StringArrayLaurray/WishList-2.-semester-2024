@@ -1,6 +1,5 @@
 package org.example.wishlist2semester2024.controller;
 
-import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import org.example.wishlist2semester2024.model.User;
 import org.example.wishlist2semester2024.model.Wish;
@@ -18,15 +17,13 @@ public class WishController {
 
     private final WishService wishService;
 
-
     public WishController(WishService wishService) {
         this.wishService = wishService;
     }
 
     //login
     @GetMapping("/login")
-    public String login(HttpServletRequest request, Model model){
-        HttpSession session = request.getSession();
+    public String login(HttpSession session, Model model){
         if(wishService.userAlreadyExist((String) session.getAttribute("tried_username"))){ //tjekker om brugernavnet allerede findes
             model.addAttribute("show_popup", true);
             model.addAttribute("error_username", "Brugernavn eksisterer allerede...");
@@ -38,11 +35,9 @@ public class WishController {
 
     //behandler login data fra bruger
     @PostMapping("/login")
-    public String userPage(@RequestParam("username") String username,
-                           @RequestParam("password") String password,
-                           Model model, HttpSession session) {
-        if (wishService.userExist(username)) {
-            model.addAttribute("user", wishService.getUser(username)); //tjekker om brugeren findes
+    public String userPage(@RequestParam("username") String username, Model model, HttpSession session) {
+        if (wishService.userExist(username)) {//tjekker om brugeren findes
+            model.addAttribute("user", wishService.getUser(username)); //Henter en specifik bruger baseret på brugernavn.
             session.setAttribute("username", username);
             session.setAttribute("isLoggedIn", true); //gemmer login status i sessionen og omddirigere til brugerens egen side
             return "redirect:/userPage";
@@ -54,8 +49,7 @@ public class WishController {
 
     //brugersiden
     @GetMapping("/userPage")
-    public String userPage(Model model, HttpServletRequest request) {
-        HttpSession session = request.getSession();
+    public String userPage(Model model, HttpSession session) {
         Boolean isLoggedIn = (Boolean) session.getAttribute("isLoggedIn"); //kigger på session om bruger er logget ind
         if (isLoggedIn == null || !isLoggedIn) { //hvis ikke, så login side
             return "redirect:/login";
@@ -69,13 +63,11 @@ public class WishController {
 
     //log ud
     @GetMapping("/logout")
-    public String logout(HttpServletRequest request) {
-        HttpSession session = request.getSession();
+    public String logout(HttpSession session) {
         session.setAttribute("isLoggedIn", false);
         session.invalidate();
         return "redirect:/login"; //"fjerner" deres session og omdirigere til login
     }
-
 
     //opretter bruger - tilføjer ny bruger til systemet
     @PostMapping("/createUser")
@@ -99,21 +91,17 @@ public class WishController {
 
     //oprettelse af ønskeliste
     @PostMapping("/createWishlist")
-    public String createWishlist(@ModelAttribute Wishlist wishlist, HttpServletRequest request) {
-        String username = (String) request.getSession().getAttribute("username");
+    public String createWishlist(@ModelAttribute Wishlist wishlist, HttpSession session) {
+        String username = (String) session.getAttribute("username");
         wishService.addWishlist(wishlist, username); //tilføjer ønskelisten
         return "redirect:/userPage";
     }
 
     //Viser en specifik ønskeliste baseret på wishlist_id.
     @GetMapping("/viewWishList/{wishlist_id}")
-    public String viewWishList(@PathVariable("wishlist_id") int wishlist_id, Model model,
-                               HttpServletRequest request){
-        HttpSession session = request.getSession();
-        //henter alle ønsker der er på ønskelisten
-        List<Wish> wishList = wishService.fetchAllWishes(wishlist_id);
-        // Hent ønskelisten baseret på ID for at få navnet
-        Wishlist wishlist = wishService.getWishlistById(wishlist_id);
+    public String viewWishList(@PathVariable("wishlist_id") int wishlist_id, Model model, HttpSession session){
+        List<Wish> wishList = wishService.fetchAllWishes(wishlist_id); //henter alle ønsker der er på ønskelisten
+        Wishlist wishlist = wishService.getWishlistById(wishlist_id); // Hent ønskelisten baseret på ID for at få navnet
         String username = (String) session.getAttribute("username");
         model.addAttribute("wishes", wishList);
         model.addAttribute("wishlist_id", wishlist_id);  // Passer wishlist_id til view
@@ -122,10 +110,10 @@ public class WishController {
         return "wishList";
     }
 
-
     // sletter et ønske
     @GetMapping("deleteWish/{wishlist_id}/{wish_id}")
-    public String deleteWish(@PathVariable("wishlist_id") int wishlist_id, @PathVariable("wish_id") int wish_id) {
+    public String deleteWish(@PathVariable("wishlist_id") int wishlist_id,
+                             @PathVariable("wish_id") int wish_id) {
         boolean deleted = wishService.deleteWish(wish_id);
         if(deleted){
             return "redirect:/viewWishList/" + wishlist_id;
@@ -136,16 +124,16 @@ public class WishController {
 
     // tilføjer et ønske
     @PostMapping("/addWish/{wishlist_id}")
-    public String addWish(@ModelAttribute Wish wish, @PathVariable("wishlist_id") int wishlist_id) { //wish objekt og wishlist_id som input
+    public String addWish(@ModelAttribute Wish wish, @PathVariable("wishlist_id") int wishlist_id) { // wish objekt og wishlist_id som input
         wishService.addWishToWishlist(wish, wishlist_id);
         return "redirect:/viewWishList/" + wishlist_id;
     }
 
-
-
     //(U)opdatere et ønske
     @PostMapping("updateWish/{wishlist_id}/{wish_id}")
-    public String updateWish(@PathVariable("wishlist_id") int wishlist_id,@PathVariable("wish_id") int wish_id, @ModelAttribute Wish wish){
+    public String updateWish(@PathVariable("wishlist_id") int wishlist_id,
+                             @PathVariable("wish_id") int wish_id,
+                             @ModelAttribute Wish wish){
         wishService.updateWish(wish_id, wish);
         return "redirect:/viewWishList/" + wishlist_id;
     }
@@ -171,7 +159,4 @@ public class WishController {
             return "redirect:/userPage";
         }
     }
-
 }
-
-
