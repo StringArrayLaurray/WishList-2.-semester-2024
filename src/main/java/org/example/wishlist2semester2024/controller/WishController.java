@@ -79,11 +79,11 @@ public class WishController {
 
     //opretter bruger - tilføjer ny bruger til systemet
     @PostMapping("/createUser")
-    public String createUser(@ModelAttribute User user, Model model, HttpServletRequest request){
-        if (wishService.userAlreadyExist(user.getUsername())){
-            HttpSession session = request.getSession();
-            session.setAttribute("tried_username", user.getUsername());
-            return "redirect:/index#popup1"; //skal laves, lige nu er det bare error page
+    public String createUser(@ModelAttribute User user, Model model) {
+        if (wishService.userAlreadyExist(user.getUsername())) {
+            model.addAttribute("error", "Brugernavn eksisterer allerede. Vælg venligst et andet.");
+            model.addAttribute("user", user); // Behold brugernavnet og andre data, brugeren har udfyldt
+            return "createUser"; // Gå tilbage til oprettelsessiden med fejlbeskeden
         } else {
             wishService.addUser(user);
             return "redirect:/userPage";
