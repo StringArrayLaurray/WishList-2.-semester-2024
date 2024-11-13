@@ -12,10 +12,9 @@ import java.util.List;
 @Repository
 public class WishRepository {
 
-    private String url = System.getenv("JDBC_DB_URL");
-    private String username = System.getenv("JDBC_DB_USERNAME");
-    private String password = System.getenv("JDBC_DB_PASSWORD");
-
+    private String url = "jdbc:mysql://localhost:3306/wishlist";
+    private String username = "root";
+    private String password = "#Zyw48bdc";
 
     //Henter alle ønsker (wish) tilknyttet en bestemt ønskeliste (wishlist_id).
     public List<Wish> fetchAllWishes(int wishlist_id){
@@ -305,6 +304,27 @@ public class WishRepository {
         }
 
         return wish;
+    }
+    // Henter alt fra wishlist tabellen
+    public List<Wishlist> fetchAllWishlists() {
+        List<Wishlist> wishlists = new ArrayList<>();
+        String sql = "SELECT * FROM wishlist";
+
+        try (Connection con = DriverManager.getConnection(url, username, password);
+             Statement stmt = con.createStatement();
+             ResultSet rs = stmt.executeQuery(sql)) {
+
+            while (rs.next()) {
+                Wishlist wishlist = new Wishlist();
+                wishlist.setWishlist_id(rs.getInt("wishlist_id"));
+                wishlist.setWishlist_name(rs.getString("wishlist_name"));
+                wishlists.add(wishlist);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+            throw new RuntimeException("Fejl ved hentning af alle ønskelister", e);
+        }
+        return wishlists;
     }
 
 
