@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Public Wish List</title>
+    <link rel="stylesheet" href="/css/styling.css">
+</head>
+<body>
+<div class="container">
+    <h1>Offentlig Ønskeliste: <span th:text="${wishlistName}"></span></h1>
+
+    <ul class="wish-list">
+        <li th:each="wish : ${wishes}" class="wish-item">
+            <div class="wish-details">
+                <span class="wish-name" th:text="${wish.wish_name}">Wish Name</span>
+                <span class="wish-price" th:text="${wish.wish_price}">Price</span>
+                <span class="wish-description" th:text="${wish.wish_description}">Description</span>
+                <a class="wish-link" th:href="${wish.wish_link}" target="_blank">Link</a>
+            </div>
+        </li>
+    </ul>
+
+    <a href="/login" class="back-to-login">Tilbage til Login</a>
+</div>
+</body>
+</html>

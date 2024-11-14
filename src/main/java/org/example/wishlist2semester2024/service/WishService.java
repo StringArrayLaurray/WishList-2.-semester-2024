@@ -74,5 +74,9 @@ public class WishService {
     public Wish getWishById(int wish_id) {
         return wishRepository.getWishById(wish_id);
     }
+    // bruges til at kunne hente alle eksisterende ønskelister
+    public List<Wishlist> fetchAllWishlists() {
+        return wishRepository.fetchAllWishlists();
+    }
 
 }
