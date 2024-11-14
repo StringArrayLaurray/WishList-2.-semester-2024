@@ -1,8 +1,8 @@
-import jakarta.servlet.http.HttpSession;
+package org.example.wishlist2semester2024.controllerTest;
+
 import org.example.wishlist2semester2024.controller.WishController;
-import org.example.wishlist2semester2024.model.User;
-import org.example.wishlist2semester2024.model.Wish;
 import org.example.wishlist2semester2024.model.Wishlist;
+import org.example.wishlist2semester2024.model.User;
 import org.example.wishlist2semester2024.service.WishService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,11 +14,11 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @WebMvcTest(WishController.class)
-public class WishControllerTest {
+public class ControllerTest {
 
     @Autowired
     private MockMvc mockMvc;
@@ -26,62 +26,63 @@ public class WishControllerTest {
     @MockBean
     private WishService wishService;
 
-    // Denne test validerer, at login-siden fungerer korrekt og viser de forventede elementer
+    // Test for login page (GET request)
     @Test
     public void testLoginPage() throws Exception {
+        List<Wishlist> mockWishlists = new ArrayList<>();
+        when(wishService.fetchAllWishlists()).thenReturn(mockWishlists);
+
         mockMvc.perform(MockMvcRequestBuilders.get("/login"))
                 .andExpect(status().isOk()) // Tjekker at status er 200 (OK)
                 .andExpect(view().name("login")) // Tjekker at view’et er "login"
                 .andExpect(model().attributeExists("allWishlists")); // Tjekker at "allWishlists" er i modellen
     }
-
-    // Denne test tjekker, hvordan userPage-siden fungerer, når brugeren er logget ind
     @Test
     public void testUserPageWhenLoggedIn() throws Exception {
-        // Simulerer en aktiv session med en brugers username og login-status
-        HttpSession session = mock(HttpSession.class);
-        when(session.getAttribute("isLoggedIn")).thenReturn(true);
-        when(session.getAttribute("username")).thenReturn("testUser");
-        when(wishService.getUser("testUser")).thenReturn(new User());
+        String username = "testUser";
+        User mockUser = new User();
+        mockUser.setUsername(username);
 
-        mockMvc.perform(MockMvcRequestBuilders.get("/userPage").sessionAttr("isLoggedIn", true).sessionAttr("username", "testUser"))
-                .andExpect(status().isOk())
+        List<Wishlist> mockWishlists = new ArrayList<>();
+
+        when(wishService.getUser(username)).thenReturn(mockUser);
+        when(wishService.fetchWishList(username)).thenReturn(mockWishlists);
+
+        mockMvc.perform(MockMvcRequestBuilders.get("/userPage")
+                        .sessionAttr("isLoggedIn", true)
+                        .sessionAttr("username", username))
+                .andExpect(status().isOk()) // Tjekker at status er 200 (OK)
                 .andExpect(view().name("userPage")) // Tjekker at view’et er userPage
                 .andExpect(model().attributeExists("user")) // Tjekker at "user" er i modellen
-                .andExpect(model().attributeExists("wishlist")); // Tjekker at "wishlist" er i modellen
+                .andExpect(model().attribute("user", mockUser)) // Tjekker at "user" er mockUser-objektet
+                .andExpect(model().attributeExists("wishlist")) // Tjekker at "wishlist" er i modellen
+                .andExpect(model().attribute("wishlist", mockWishlists)); // Tjekker at "wishlist" er mockWishlists
     }
-
-    // Denne test kontrollerer, at ønskeliste-visningen fungerer og henter data korrekt
     @Test
-    public void testViewWishList() throws Exception {
-        int wishlistId = 1;
+    public void testCreateUserNewUser() throws Exception {
+        User newUser = new User();
+        newUser.setUsername("newUser");
 
-        // Mock session attributter og service kald
-        HttpSession session = mock(HttpSession.class);
-        when(session.getAttribute("username")).thenReturn("testUser");
+        when(wishService.userAlreadyExist("newUser")).thenReturn(false);
 
-        // Mock data for ønskeliste og ønsker
-        Wishlist wishlist = new Wishlist();
-        wishlist.setWishlist_id(wishlistId);
-        wishlist.setWishlist_name("Test Wishlist");
-
-        List<Wish> wishes = new ArrayList<>();
-        wishes.add(new Wish()); // Tilføj en test-ønske
-
-        // Mock service metoder
-        when(wishService.fetchAllWishes(wishlistId)).thenReturn(wishes);
-        when(wishService.getWishlistById(wishlistId)).thenReturn(wishlist);
-        when(wishService.getUser("testUser")).thenReturn(new User());
-
-        mockMvc.perform(MockMvcRequestBuilders.get("/viewWishList/{wishlist_id}", wishlistId)
-                        .sessionAttr("username", "testUser")) // Tilføj session attribut for "username"
-                .andExpect(status().isOk()) // Tjekker at status er 200 (OK)
-                .andExpect(view().name("wishList")) // Tjekker at view’et er "wishList"
-                .andExpect(model().attributeExists("wishes")) // Tjekker at "wishes" er i modellen
-                .andExpect(model().attributeExists("wishlist_id")) // Tjekker at "wishlist_id" er i modellen
-                .andExpect(model().attributeExists("wishlistName")) // Tjekker at "wishlistName" er i modellen
-                .andExpect(model().attribute("wishlistName", "Test Wishlist")) // Tjekker at "wishlistName" har værdi "Test Wishlist"
-                .andExpect(model().attributeExists("user")); // Tjekker at "user" er i modellen
+        mockMvc.perform(MockMvcRequestBuilders.post("/createUser")
+                        .flashAttr("user", newUser))
+                .andExpect(status().is3xxRedirection()) // Tjekker at status er en redirect (3xx)
+                .andExpect(redirectedUrl("/login")); // Tjekker at brugeren bliver omdirigeret til login
     }
+
+    @Test
+    public void testCreateUserExistingUser() throws Exception {
+        User existingUser = new User();
+        existingUser.setUsername("existingUser");
+
+        when(wishService.userAlreadyExist("existingUser")).thenReturn(true);
+
+        mockMvc.perform(MockMvcRequestBuilders.post("/createUser")
+                        .flashAttr("user", existingUser))
+                .andExpect(status().is3xxRedirection()) // Tjekker at status er en redirect (3xx)
+                .andExpect(redirectedUrl("/index#popup1")); // Tjekker at brugeren bliver omdirigeret til fejlsiden
+    }
+
 
 }
