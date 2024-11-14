@@ -20,6 +20,11 @@ public class WishController {
         this.wishService = wishService;
     }
 
+    @GetMapping("")
+    public String mainPage(){
+        return "login";
+    }
+
     // Login side
     @GetMapping("/login")
     public String login(HttpSession session, Model model) {
@@ -118,28 +123,33 @@ public class WishController {
 
     // Sletter et ønske
     @GetMapping("deleteWish/{wishlist_id}/{wish_id}")
-    public String deleteWish(@PathVariable("wishlist_id") int wishlist_id, @PathVariable("wish_id") int wish_id) {
+    public String deleteWish(@PathVariable("wishlist_id") int wishlist_id,
+                             @PathVariable("wish_id") int wish_id) {
         boolean deleted = wishService.deleteWish(wish_id);
         return "redirect:/viewWishList/" + wishlist_id;
     }
 
     // Tilføjer et ønske
     @PostMapping("/addWish/{wishlist_id}")
-    public String addWish(@ModelAttribute Wish wish, @PathVariable("wishlist_id") int wishlist_id) {
+    public String addWish(@ModelAttribute Wish wish,
+                          @PathVariable("wishlist_id") int wishlist_id) {
         wishService.addWishToWishlist(wish, wishlist_id);
         return "redirect:/viewWishList/" + wishlist_id;
     }
 
     // Opdaterer et ønske
     @PostMapping("updateWish/{wishlist_id}/{wish_id}")
-    public String updateWish(@PathVariable("wishlist_id") int wishlist_id, @PathVariable("wish_id") int wish_id, @ModelAttribute Wish wish) {
+    public String updateWish(@PathVariable("wishlist_id") int wishlist_id,
+                             @PathVariable("wish_id") int wish_id,
+                             @ModelAttribute Wish wish) {
         wishService.updateWish(wish_id, wish);
         return "redirect:/viewWishList/" + wishlist_id;
     }
 
     // Viser formular til opdatering af ønske
     @GetMapping("/updateWish/{wishlist_id}/{wish_id}")
-    public String showUpdateWishForm(@PathVariable("wishlist_id") int wishlist_id, @PathVariable("wish_id") int wish_id, Model model) {
+    public String showUpdateWishForm(@PathVariable("wishlist_id") int wishlist_id,
+                                     @PathVariable("wish_id") int wish_id, Model model) {
         Wish wish = wishService.getWishById(wish_id);
         model.addAttribute("wish", wish);
         model.addAttribute("wishlist_id", wishlist_id);
