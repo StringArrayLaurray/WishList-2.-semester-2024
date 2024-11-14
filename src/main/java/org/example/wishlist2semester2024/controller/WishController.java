@@ -1,6 +1,5 @@
 package org.example.wishlist2semester2024.controller;
 
-import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import org.example.wishlist2semester2024.model.User;
 import org.example.wishlist2semester2024.model.Wish;
@@ -21,15 +20,14 @@ public class WishController {
         this.wishService = wishService;
     }
 
-    // login
+    // Login side
     @GetMapping("/login")
-    public String login(HttpServletRequest request, Model model) {
-        HttpSession session = request.getSession();
-
+    public String login(HttpSession session, Model model) {
         // Hent alle ønskelister og vis dem på loginsiden
         List<Wishlist> allWishlists = wishService.fetchAllWishlists();
         model.addAttribute("allWishlists", allWishlists);
 
+        // Tjek om brugernavnet allerede findes i systemet
         if (wishService.userAlreadyExist((String) session.getAttribute("tried_username"))) {
             model.addAttribute("show_popup", true);
             model.addAttribute("error_username", "Brugernavn eksisterer allerede...");
@@ -37,28 +35,13 @@ public class WishController {
         return "login";
     }
 
-    // Viser alle offentlige ønskelister uden at kunne redigere dem
-    @GetMapping("/publicWishlist/{wishlist_id}")
-    public String viewPublicWishlist(@PathVariable("wishlist_id") int wishlist_id, Model model) {
-        // Hent ønskerne på ønskelisten
-        List<Wish> wishes = wishService.fetchAllWishes(wishlist_id);
-        Wishlist wishlist = wishService.getWishlistById(wishlist_id);
-
-
-        model.addAttribute("wishes", wishes);
-        model.addAttribute("wishlistName", wishlist.getWishlist_name());
-        return "publicWishlist"; // returnér til den offentlige visning uden redigeringsmuligheder
-    }
-
-    // behandler login data fra bruger
+    // Håndterer login for bruger
     @PostMapping("/login")
-    public String userPage(@RequestParam("username") String username,
-                           @RequestParam("password") String password,
-                           Model model, HttpSession session) {
+    public String userPage(@RequestParam("username") String username, Model model, HttpSession session) {
         if (wishService.userExist(username)) {
-            model.addAttribute("user", wishService.getUser(username)); // tjekker om brugeren findes
+            model.addAttribute("user", wishService.getUser(username));
             session.setAttribute("username", username);
-            session.setAttribute("isLoggedIn", true); // gemmer login status i sessionen og omdirigerer til brugerens egen side
+            session.setAttribute("isLoggedIn", true);
             return "redirect:/userPage";
         } else {
             model.addAttribute("error", "Forkert Brugernavn eller Adgangskode");
@@ -66,84 +49,69 @@ public class WishController {
         }
     }
 
-    // Brugersiden når man er logget ind
+    // Brugerside når logget ind
     @GetMapping("/userPage")
-    public String userPage(Model model, HttpServletRequest request) {
-        HttpSession session = request.getSession();
-        Boolean isLoggedIn = (Boolean) session.getAttribute("isLoggedIn"); // tjek om bruger er logget ind
-
-        if (isLoggedIn == null || !isLoggedIn) { // hvis ikke logget ind, redirect til login
+    public String userPage(Model model, HttpSession session) {
+        Boolean isLoggedIn = (Boolean) session.getAttribute("isLoggedIn");
+        if (isLoggedIn == null || !isLoggedIn) {
             return "redirect:/login";
         } else {
-            // Hent brugernavnet fra sessionen og brug det til at hente brugerdata
             String username = (String) session.getAttribute("username");
-
-            // Hent brugerobjektet og ønskelister
             User user = wishService.getUser(username);
-            model.addAttribute("user", user);  // Tilføj brugerobjektet til modellen
+            model.addAttribute("user", user);
 
             List<Wishlist> wishlists = wishService.fetchWishList(username);
-            model.addAttribute("wishlist", wishlists); // Tilføj ønskelisterne til modellen
+            model.addAttribute("wishlist", wishlists);
 
-            return "userPage"; // viser brugersiden med brugerdata
+            return "userPage";
         }
     }
 
-
     // Log ud
     @GetMapping("/logout")
-    public String logout(HttpServletRequest request) {
-        HttpSession session = request.getSession();
+    public String logout(HttpSession session) {
         session.setAttribute("isLoggedIn", false);
         session.invalidate();
-        return "redirect:/login"; // "fjerner" deres session og omdirigerer til login
+        return "redirect:/login";
     }
 
-
-// Opretter bruger - tilføjer ny bruger til systemet
+    // Opretter ny bruger
     @PostMapping("/createUser")
-    public String createUser(@ModelAttribute User user, Model model, HttpServletRequest request) {
+    public String createUser(@ModelAttribute User user, Model model, HttpSession session) {
         if (wishService.userAlreadyExist(user.getUsername())) {
-            // Hvis brugernavnet allerede eksisterer, vis fejlbesked
-            HttpSession session = request.getSession();
             session.setAttribute("tried_username", user.getUsername());
-            return "redirect:/index#popup1"; // Omdiriger til en popup for fejlmeddelelse (eller en anden fejlvisning)
+            return "redirect:/index#popup1";
         } else {
-            // Tilføj ny bruger og omdiriger til login-siden, så brugeren kan logge ind
             wishService.addUser(user);
             return "redirect:/login";
         }
     }
 
-
-    // Viser oprettelse af brugeren skabelon
+    // Viser oprettelse af bruger skabelon
     @GetMapping("/createUser")
     public String showCreateUserForm(Model model) {
-        model.addAttribute("user", new User()); // Tilføjer en tom bruger til formular
+        model.addAttribute("user", new User());
         return "createUser";
     }
 
     // Oprettelse af ønskeliste
     @PostMapping("/createWishlist")
-    public String createWishlist(@ModelAttribute Wishlist wishlist, HttpServletRequest request) {
-        String username = (String) request.getSession().getAttribute("username");
-        wishService.addWishlist(wishlist, username); // tilføjer ønskelisten
+    public String createWishlist(@ModelAttribute Wishlist wishlist, HttpSession session) {
+        String username = (String) session.getAttribute("username");
+        wishService.addWishlist(wishlist, username);
         return "redirect:/userPage";
     }
 
-    // Viser en specifik ønskeliste baseret på wishlist_id.
+    // Viser en specifik ønskeliste baseret på wishlist_id
     @GetMapping("/viewWishList/{wishlist_id}")
-    public String viewWishList(@PathVariable("wishlist_id") int wishlist_id, Model model,
-                               HttpServletRequest request) {
-        HttpSession session = request.getSession();
-        // henter alle ønsker der er på ønskelisten
+    public String viewWishList(@PathVariable("wishlist_id") int wishlist_id, Model model, HttpSession session) {
         List<Wish> wishList = wishService.fetchAllWishes(wishlist_id);
-        // Hent ønskelisten baseret på ID for at få navnet
         Wishlist wishlist = wishService.getWishlistById(wishlist_id);
         String username = (String) session.getAttribute("username");
+
         model.addAttribute("wishes", wishList);
-        model.addAttribute("wishlist_id", wishlist_id); // Passer wishlist_id til view
-        model.addAttribute("wishlistName", wishlist.getWishlist_name()); // Send navnet på ønskelisten til view
+        model.addAttribute("wishlist_id", wishlist_id);
+        model.addAttribute("wishlistName", wishlist.getWishlist_name());
         model.addAttribute("user", wishService.getUser(username));
         return "wishList";
     }
@@ -157,7 +125,7 @@ public class WishController {
 
     // Tilføjer et ønske
     @PostMapping("/addWish/{wishlist_id}")
-    public String addWish(@ModelAttribute Wish wish, @PathVariable("wishlist_id") int wishlist_id) { // wish objekt og wishlist_id som input
+    public String addWish(@ModelAttribute Wish wish, @PathVariable("wishlist_id") int wishlist_id) {
         wishService.addWishToWishlist(wish, wishlist_id);
         return "redirect:/viewWishList/" + wishlist_id;
     }
@@ -171,13 +139,11 @@ public class WishController {
 
     // Viser formular til opdatering af ønske
     @GetMapping("/updateWish/{wishlist_id}/{wish_id}")
-    public String showUpdateWishForm(@PathVariable("wishlist_id") int wishlist_id,
-                                     @PathVariable("wish_id") int wish_id,
-                                     Model model) {
-        Wish wish = wishService.getWishById(wish_id); // henter eksisterende ønske
+    public String showUpdateWishForm(@PathVariable("wishlist_id") int wishlist_id, @PathVariable("wish_id") int wish_id, Model model) {
+        Wish wish = wishService.getWishById(wish_id);
         model.addAttribute("wish", wish);
         model.addAttribute("wishlist_id", wishlist_id);
-        return "updateWish"; // Side, der viser opdateringsformularen
+        return "updateWish";
     }
 
     // Sletter en ønskeliste
@@ -185,5 +151,16 @@ public class WishController {
     public String deleteWishlist(@PathVariable("wishlist_id") int wishlist_id) {
         boolean deleted = wishService.deleteWishList(wishlist_id);
         return "redirect:/userPage";
+    }
+
+    // Viser alle offentlige ønskelister uden redigeringsmuligheder
+    @GetMapping("/publicWishlist/{wishlist_id}")
+    public String viewPublicWishlist(@PathVariable("wishlist_id") int wishlist_id, Model model) {
+        List<Wish> wishes = wishService.fetchAllWishes(wishlist_id);
+        Wishlist wishlist = wishService.getWishlistById(wishlist_id);
+
+        model.addAttribute("wishes", wishes);
+        model.addAttribute("wishlistName", wishlist.getWishlist_name());
+        return "publicWishlist";
     }
 }
