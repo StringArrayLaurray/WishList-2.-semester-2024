@@ -12,9 +12,9 @@ import java.util.List;
 @Repository
 public class WishRepository {
 
-    private String url = "JDBC_DB_URL";
-    private String username = "JDBC_DB_USER";
-    private String password = "JDBC_DB_PASSWORD";
+    private String url = "jdbc:mysql://wishlist.mysql.database.azure.com:3306/wishlist";
+    private String username = "Q8";
+    private String password = "husumgade49!";
 
     //Henter alle ønsker (wish) tilknyttet en bestemt ønskeliste (wishlist_id).
     public List<Wish> fetchAllWishes(int wishlist_id){
