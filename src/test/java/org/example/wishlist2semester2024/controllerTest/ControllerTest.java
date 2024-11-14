@@ -33,9 +33,9 @@ public class ControllerTest {
         when(wishService.fetchAllWishlists()).thenReturn(mockWishlists);
 
         mockMvc.perform(MockMvcRequestBuilders.get("/login"))
-                .andExpect(status().isOk()) // Tjekker at status er 200 (OK)
-                .andExpect(view().name("login")) // Tjekker at view’et er "login"
-                .andExpect(model().attributeExists("allWishlists")); // Tjekker at "allWishlists" er i modellen
+                .andExpect(status().isOk()) 
+                .andExpect(view().name("login")) // Tjekker at den går til login
+                .andExpect(model().attributeExists("allWishlists")); // Tjekker at allWishlists er i modellen
     }
     @Test
     public void testUserPageWhenLoggedIn() throws Exception {
@@ -51,12 +51,12 @@ public class ControllerTest {
         mockMvc.perform(MockMvcRequestBuilders.get("/userPage")
                         .sessionAttr("isLoggedIn", true)
                         .sessionAttr("username", username))
-                .andExpect(status().isOk()) // Tjekker at status er 200 (OK)
-                .andExpect(view().name("userPage")) // Tjekker at view’et er userPage
-                .andExpect(model().attributeExists("user")) // Tjekker at "user" er i modellen
-                .andExpect(model().attribute("user", mockUser)) // Tjekker at "user" er mockUser-objektet
-                .andExpect(model().attributeExists("wishlist")) // Tjekker at "wishlist" er i modellen
-                .andExpect(model().attribute("wishlist", mockWishlists)); // Tjekker at "wishlist" er mockWishlists
+                .andExpect(status().isOk()) 
+                .andExpect(view().name("userPage")) // Tjekker at den viser userPage.html
+                .andExpect(model().attributeExists("user")) // Tjekker at user er i modellen
+                .andExpect(model().attribute("user", mockUser)) // Tjekker at user er i mockUser
+                .andExpect(model().attributeExists("wishlist")) // Tjekker at wishlist er i modellen
+                .andExpect(model().attribute("wishlist", mockWishlists)); // Tjekker at wishlist er i mockWishlists
     }
     @Test
     public void testCreateUserNewUser() throws Exception {
@@ -67,8 +67,8 @@ public class ControllerTest {
 
         mockMvc.perform(MockMvcRequestBuilders.post("/createUser")
                         .flashAttr("user", newUser))
-                .andExpect(status().is3xxRedirection()) // Tjekker at status er en redirect (3xx)
-                .andExpect(redirectedUrl("/login")); // Tjekker at brugeren bliver omdirigeret til login
+                .andExpect(status().is3xxRedirection()) // Tjekker at at den redirecter
+                .andExpect(redirectedUrl("/login")); // Tjekker at brugeren kommer til login
     }
 
     @Test
@@ -80,8 +80,8 @@ public class ControllerTest {
 
         mockMvc.perform(MockMvcRequestBuilders.post("/createUser")
                         .flashAttr("user", existingUser))
-                .andExpect(status().is3xxRedirection()) // Tjekker at status er en redirect (3xx)
-                .andExpect(redirectedUrl("/index#popup1")); // Tjekker at brugeren bliver omdirigeret til fejlsiden
+                .andExpect(status().is3xxRedirection()) // Tjekker at den redirecter
+                .andExpect(redirectedUrl("/index#popup1")); // Tjekker at brugeren kommer til fejlsiden
     }
 
 
